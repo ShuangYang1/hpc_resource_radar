@@ -33,14 +33,14 @@
    pfs_send = [0.1,0.2,0.3,0.4,0.5]
    power = [401,402,403,404,405]
    ```
-   然后调用函数：
+   然后调用函数绘制雷达图，将上述列表作为参数传递给函数：
 
    ```python
-   hpc_resource_radar(cpu,ram,pfs_recv,pfs_send,power,image_path)
+   hpc_resource_radar(cpu, ram, pfs_recv, pfs_send, power, image_path)
    ```
    或
    ```python
-   hpc_resource_radar_split(cpu,ram,pfs_recv,pfs_send,power,image_path)
+   hpc_resource_radar_split(cpu, ram, pfs_recv, pfs_send, power, image_path)
    ```
    参数说明：
    - cpu：CPU使用率列表，单位为百分比
@@ -48,7 +48,8 @@
    - pfs_recv：文件系统接收带宽列表，单位为GB
    - pfs_send：文件系统发送带宽列表，单位为GB
    - power：功耗列表，单位为W
-   - image_path：图片保存路径，包括文件名和后缀名，例如：`"./example.png"`
+   - image_path：图片保存路径，包括文件名和后缀名，例如：`"./example.png"`  
+
    列表中元素格式应为整型或浮点数，且列表长度相同。
 
 ## 示例
