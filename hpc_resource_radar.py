@@ -1,8 +1,9 @@
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 
-def hpc_resource_radar(cpu,ram,pfs_recv,pfs_send,power):
+
+def hpc_resource_radar(cpu, ram, pfs_recv, pfs_send, power, image_path):
     plt.rcParams["axes.facecolor"] = "whitesmoke"
     angles = np.linspace(0.5 * np.pi, -1.5 * np.pi, len(ram), endpoint=False)
     ram = np.concatenate((ram, [ram[0]]))
@@ -14,9 +15,7 @@ def hpc_resource_radar(cpu,ram,pfs_recv,pfs_send,power):
 
     fig = plt.figure(figsize=(7, 7), dpi=1000)
     ax = fig.add_axes(rect=[0.1, 0.1, 0.8, 0.8], projection="polar")
-    ax.plot(
-        angles, cpu, color="darkred", linestyle="-", label="CPU", linewidth=1.0
-    )
+    ax.plot(angles, cpu, color="darkred", linestyle="-", label="CPU", linewidth=1.0)
     ax.plot(
         angles,
         list(map(lambda x: x * 100 / max(ram), ram)),
@@ -140,10 +139,32 @@ def hpc_resource_radar(cpu,ram,pfs_recv,pfs_send,power):
     matplotlib.rcParams["agg.path.chunksize"] = 180000
     matplotlib.rcParams["path.simplify_threshold"] = 1
     ax.legend(bbox_to_anchor=(1.1, 1.1))
-    image_path = "images/hpc_resource_radar.png"
     fig.savefig(image_path)
-    return image_path
+    return True
 
 
 if __name__ == "__main__":
-    hpc_resource_radar(cpu, ram, pfs_recv, pfs_send, power)
+    cpu, ram, pfs_recv, pfs_send, power = [], [], [], [], []
+    with open("example.txt", "r") as infile:
+        for line in infile.readlines():
+            if line[:3] == "ram":
+                tot = line.split()[2]
+                free = line.split()[4]
+                used = (int(tot) - int(free)) * 4 * 1024 / 1024 / 1024 / 1024
+                ram.append(used)
+            elif line[:3] == "pfs":
+                recv = int(line.split()[3]) / 1024 / 1024 / 1024
+                send = int(line.split()[5]) / 1024 / 1024 / 1024
+                pfs_recv.append(recv)
+                pfs_send.append(send)
+            elif line[:7] == "cpu_tot":
+                total = (
+                    float(line.split()[2])
+                    + float(line.split()[4])
+                    + float(line.split()[6])
+                )
+                cpu.append(total)
+            elif line[:5] == "Power":
+                p = int(line.split()[1])
+                power.append(p)
+    hpc_resource_radar(cpu, ram, pfs_recv, pfs_send, power, "example.png")
